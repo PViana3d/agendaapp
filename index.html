@@ -418,7 +418,11 @@ function getConfig() {
   const c = window.AGENDA_CONFIG || {};
   let url = c.supabaseUrl, key = c.supabaseKey;
   try { const s = JSON.parse(localStorage.getItem("agenda-obras-config") || "{}"); url = url || s.url; key = key || s.key; } catch (e) {}
-  return url && key ? { url: url.trim().replace(/\/$/, ""), key: key.trim() } : null;
+  if (!url || !key) return null;
+  url = url.trim();
+  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+  try { url = new URL(url).origin; } catch (e) { url = url.replace(/\/+$/, ""); } // só https://xxxx.supabase.co, sem /rest/v1 nem outros caminhos
+  return { url, key: key.trim().replace(/^["']|["']$/g, "") };
 }
 const store = {
   sb: null, user: null, channel: null, online: navigator.onLine,

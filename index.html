@@ -3,30 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2f5d50">
+<meta name="theme-color" content="#2b2b2e">
 <meta name="description" content="Agenda de tarefas de obra com vistas diária, semanal e mensal.">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>Agenda de Obras</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="favicon-64.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Agenda OFORSEP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: formulário fixo à esquerda (topo no telemóvel), área de agenda com vistas Dia / Semana / Mês / Ordem / Concluídas */
 :root {
-  --bg: #eef0ec;
+  --bg: #f1f1ef;
   --surface: #ffffff;
-  --surface-2: #f6f7f4;
-  --ink: #1d2320;
-  --muted: #5e6862;
-  --line: #d5dad4;
-  --accent: #2f5d50;
+  --surface-2: #f7f7f5;
+  --ink: #232325;
+  --muted: #64646a;
+  --line: #dcdcd8;
+  --accent: #c94a00;
   --accent-ink: #ffffff;
-  --accent-soft: #dde8e3;
+  --accent-soft: #fbe3d4;
+  --brand: #fb5a00;
+  --brand-bg: #2b2b2e;
+  --brand-ink: #f2f2f3;
+  --brand-muted: #a9a9ae;
   --p-flex: #7b8a83;
   --p-normal: #3f6fa8;
-  --p-prio: #c27a12;
+  --p-prio: #b8900a;
   --p-urg: #c0392b;
   --p-urg-soft: #fbe6e3;
   --wait: #a0661a;
@@ -38,20 +43,21 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #151a18; --surface: #1d2421; --surface-2: #232b28; --ink: #e6ebe7; --muted: #9aa69f;
-    --line: #34403b; --accent: #7fb8a5; --accent-ink: #10201a; --accent-soft: #24372f;
-    --p-flex: #8f9c96; --p-normal: #7aa6dc; --p-prio: #e3a347; --p-urg: #ef7a6c; --p-urg-soft: #3a2421;
+    --bg: #18181a; --surface: #222225; --surface-2: #29292d; --ink: #ececee; --muted: #a0a0a7;
+    --line: #3a3a3f; --accent: #ff7a2e; --accent-ink: #1a0d04; --accent-soft: #3a2518;
+    --p-flex: #8f9c96; --p-normal: #7aa6dc; --p-prio: #e0b84a; --p-urg: #ef7a6c; --p-urg-soft: #3a2421;
     --wait: #e3a347; --wait-soft: #3a2f1f; --done: #66726c; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #151a18; --surface: #1d2421; --surface-2: #232b28; --ink: #e6ebe7; --muted: #9aa69f;
-  --line: #34403b; --accent: #7fb8a5; --accent-ink: #10201a; --accent-soft: #24372f;
-  --p-flex: #8f9c96; --p-normal: #7aa6dc; --p-prio: #e3a347; --p-urg: #ef7a6c; --p-urg-soft: #3a2421;
+  --bg: #18181a; --surface: #222225; --surface-2: #29292d; --ink: #ececee; --muted: #a0a0a7;
+  --line: #3a3a3f; --accent: #ff7a2e; --accent-ink: #1a0d04; --accent-soft: #3a2518;
+  --p-flex: #8f9c96; --p-normal: #7aa6dc; --p-prio: #e0b84a; --p-urg: #ef7a6c; --p-urg-soft: #3a2421;
   --wait: #e3a347; --wait-soft: #3a2f1f; --done: #66726c; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+html, body { margin: 0; }
 body {
   background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.45;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -65,9 +71,18 @@ button { cursor: pointer; }
 .wrap { max-width: 1360px; margin: 0 auto; display: grid; gap: 20px; grid-template-columns: 320px minmax(0, 1fr); align-items: start; }
 @media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); } }
 
-header.top { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }
-h1 { font-family: var(--f-display); font-weight: 700; font-size: 2rem; letter-spacing: .01em; margin: 0; text-transform: uppercase; }
-h1 span { color: var(--accent); }
+.brandbar { background: var(--brand-bg); color: var(--brand-ink); border-bottom: 3px solid var(--brand);
+  margin: calc(-1 * max(20px, env(safe-area-inset-top, 0px))) calc(-1 * max(16px, env(safe-area-inset-right, 0px))) 20px calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding: max(14px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 14px max(16px, env(safe-area-inset-left, 0px)); }
+.brandbar .in { max-width: 1360px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; }
+.brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.brand img { height: 44px; width: auto; max-width: 60vw; display: block; }
+.brand .app { font-family: var(--f-display); font-weight: 600; font-size: 1.35rem; text-transform: uppercase; letter-spacing: .08em; padding-left: 16px; border-left: 1px solid #4a4a4f; color: var(--brand-ink); }
+.brandbar .today-lbl { color: var(--brand-ink); }
+.brandbar .sync, .brandbar #acct { color: var(--brand-muted); }
+.brandbar .btn.small { background: transparent; color: var(--brand-ink); border-color: #55555b; }
+.brandbar .btn.small:hover { border-color: var(--brand); }
+@media (max-width: 560px) { .brand img { height: 30px; } .brand .app { font-size: 1.05rem; padding-left: 10px; } .brand { gap: 10px; } }
 .today-lbl { color: var(--muted); font-size: .95rem; }
 .sync { font-size: .78rem; color: var(--muted); }
 
@@ -204,7 +219,9 @@ select.estado[data-e="Em espera"] { background: var(--wait-soft); color: var(--w
 .acctbar .btn.small { padding: 4px 9px; font-size: .8rem; }
 #acct { font-size: .8rem; color: var(--muted); margin-right: 4px; }
 .auth { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); overflow-y: auto; }
-.auth .panel { width: min(420px, 100%); }
+.auth .panel { width: min(420px, 100%); overflow: hidden; }
+.auth-brand { background: var(--brand-bg); border-bottom: 3px solid var(--brand); margin: -18px -18px 18px; padding: 22px 18px; display: grid; place-items: center; }
+.auth-brand img { height: 46px; width: auto; max-width: 100%; }
 .auth h2 { font-family: var(--f-display); text-transform: uppercase; font-size: 1.6rem; margin: 0 0 4px; letter-spacing: .02em; }
 .auth p { color: var(--muted); font-size: .9rem; margin: 0 0 14px; }
 .auth input[type=email], .auth input[type=password], .auth input[type=url] { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface-2); }
@@ -215,7 +232,7 @@ body { padding-top: max(20px, env(safe-area-inset-top, 0px)); padding-bottom: ma
 .fab { display: none; }
 @media (max-width: 900px) {
   .form-panel.closed { display: none; }
-  .fab { display: inline-flex; align-items: center; gap: 6px; position: fixed; z-index: 6; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 28px; padding: 14px 20px; font-weight: 600; font-size: 1rem; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+  .fab { display: inline-flex; align-items: center; gap: 6px; position: fixed; z-index: 6; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 28px; padding: 14px 20px; font-weight: 600; font-size: 1rem; box-shadow: 0 4px 14px rgba(0,0,0,.25); background: var(--brand); color: #fff; }
   .toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
   body { padding-bottom: max(96px, env(safe-area-inset-bottom, 0px)); }
 }
@@ -231,9 +248,9 @@ body { padding-top: max(20px, env(safe-area-inset-top, 0px)); padding-bottom: ma
 </head>
 <body>
 
-<div class="wrap">
-  <header class="top">
-    <h1>Agenda <span>de Obras</span></h1>
+<header class="brandbar">
+  <div class="in">
+    <div class="brand"><img src="logo-white.png" alt="OFORSEP Soluções Industriais"><span class="app">Agenda</span></div>
     <div>
       <div class="today-lbl" id="today-lbl"></div>
       <div class="sync" id="sync">A carregar…</div>
@@ -245,7 +262,9 @@ body { padding-top: max(20px, env(safe-area-inset-top, 0px)); padding-bottom: ma
         <input type="file" id="imp" accept=".json,application/json" hidden>
       </div>
     </div>
-  </header>
+  </div>
+</header>
+<div class="wrap">
 
   <aside class="panel form-panel closed" id="form-panel">
     <h2 id="form-title">Nova tarefa</h2>
@@ -346,6 +365,7 @@ body { padding-top: max(20px, env(safe-area-inset-top, 0px)); padding-bottom: ma
 
 <div class="auth" id="auth" hidden>
   <div class="panel">
+    <div class="auth-brand"><img src="logo-white.png" alt="OFORSEP Soluções Industriais"></div>
     <form id="auth-config" hidden>
       <h2>Ligar à base de dados</h2>
       <p>Cole o endereço e a chave pública do seu projeto Supabase (Project Settings › API). Só é pedido uma vez neste dispositivo.</p>
@@ -355,7 +375,7 @@ body { padding-top: max(20px, env(safe-area-inset-top, 0px)); padding-bottom: ma
       <button class="btn primary" type="submit" style="margin-top:6px">Guardar</button>
     </form>
     <form id="auth-login" hidden>
-      <h2>Agenda de Obras</h2>
+      <h2>Agenda</h2>
       <p>Entre com a sua conta para ver as tarefas.</p>
       <div class="field"><label class="lbl" for="l-email">Email</label><input type="email" id="l-email" autocomplete="username"></div>
       <div class="field" style="margin-top:10px"><label class="lbl" for="l-pass">Palavra-passe</label><input type="password" id="l-pass" autocomplete="current-password"></div>

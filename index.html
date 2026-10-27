@@ -529,9 +529,21 @@ $("#auth-login").addEventListener("submit", async e => {
   e.preventDefault();
   $("#l-err").textContent = ""; $("#l-btn").disabled = true; $("#l-btn").textContent = "A entrar…";
   try { await store.login($("#l-email").value.trim(), $("#l-pass").value); $("#l-pass").value = ""; }
-  catch (err) { $("#l-err").textContent = /invalid/i.test(err?.message || "") ? "Email ou palavra-passe incorretos." : "Não foi possível entrar. Verifique a ligação à internet."; }
+  catch (err) { $("#l-err").textContent = loginMsg(err); console.error(err); }
   $("#l-btn").disabled = false; $("#l-btn").textContent = "Entrar";
 });
+function loginMsg(err) {
+  const m = String(err?.message || err || ""), code = err?.code || "", st = err?.status;
+  if (/invalid api key|no api key|invalid.*jwt|apikey/i.test(m) || code === "bad_jwt")
+    return "A chave do Supabase não é válida. Use a chave anon / publishable em Project Settings › API e confirme que foi copiada inteira. (" + m + ")";
+  if (code === "invalid_credentials" || /invalid login credentials/i.test(m))
+    return "Email ou palavra-passe incorretos. Confirme o utilizador em Supabase › Authentication › Users.";
+  if (code === "email_not_confirmed" || /not confirmed/i.test(m))
+    return "Este email ainda não foi confirmado. Em Supabase › Authentication › Users, abra o utilizador e confirme-o (ou crie-o de novo com Auto Confirm User).";
+  if (/failed to fetch|network|load failed/i.test(m) || st === 0)
+    return "Não foi possível contactar o Supabase. Confirme o endereço do projeto (https://xxxx.supabase.co) e a ligação à internet.";
+  return "Não foi possível entrar: " + m + (st ? " (código " + st + ")" : "");
+}
 $("#l-reset").addEventListener("click", () => { try { localStorage.removeItem("agenda-obras-config"); } catch (e) {} showAuth("config"); });
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") store.refresh(); });
 window.addEventListener("online", () => store.refresh());
